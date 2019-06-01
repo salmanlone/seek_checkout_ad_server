@@ -14,6 +14,7 @@ install:
 script:
   - npm run ts-test
   - npm run build
+  - npm run prepare-swagger
 deploy:
   provider: heroku
   api_key:
