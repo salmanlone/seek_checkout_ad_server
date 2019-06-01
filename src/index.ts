@@ -2,10 +2,7 @@ var restify = require('restify');
 import * as corsMiddleware from "restify-cors-middleware";
 import Routes from "./config/routes";
 
-function respond(req, res, next) {
-  res.send('hello ' + req.params.name);
-  next();
-}
+let serverPort = process.env.PORT || 9000;
 
 const cors = corsMiddleware({
   origins: ["*"],
@@ -27,6 +24,6 @@ Routes.apply(server);
 // server.get('/hello/:name', respond);
 // server.head('/hello/:name', respond);
 
-server.listen(80, function () {
+server.listen(serverPort, function () {
   console.log('%s listening at %s', server.name, server.url);
 });
