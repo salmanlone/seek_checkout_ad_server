@@ -21,6 +21,16 @@ class UserDb {
     }
 }
 
+/**
+ * @swagger
+ * definition:
+ *   user:
+ *     properties:
+ *       name:
+ *         type: string
+ *       username:
+ *         type: string
+ */
 export default class User {
 
     private static db = new UserDb().Instance;

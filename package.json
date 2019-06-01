@@ -7,7 +7,8 @@
     "test": "npm run build && mocha",
     "ts-test": "mocha -r ts-node/register test/**/*.spec.ts",
     "start": "npm run build && node ./build/index.js",
-    "build": "rimraf build && tsc"
+    "build": "rimraf build && tsc",
+    "prepare-swagger": "node ./helper/prepare_swagger.js"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "lodash": "^4.17.11",
     "lowdb": "^1.0.0",
     "restify": "^8.3.2",
+    "swagger-jsdoc": "^3.2.9",
     "typescript": "^3.5.1"
   },
   "devDependencies": {
