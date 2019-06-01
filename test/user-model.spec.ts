@@ -36,7 +36,7 @@ describe('User model', function () {
         });
 
         it("should not persist the user", function () {
-            expect(User.findOne("salman-ne", "pass1")).to.be.false;
+            expect(User.findOne("salman-ne", "pass1")).to.be.null;
         });
     });
 

@@ -21,7 +21,17 @@ class UserDb {
     }
 }
 
-export default class User {
+/**
+ * @swagger
+ * definition:
+ *   user:
+ *     properties:
+ *       name:
+ *         type: string
+ *       username:
+ *         type: string
+ */
+export default class ModelUser {
 
     private static db = new UserDb().Instance;
     private name: string;
@@ -43,12 +53,12 @@ export default class User {
     }
 
     save() {
-        let foundUser = User.db.get('users')
+        let foundUser = ModelUser.db.get('users')
             .find({ username: this.username })
             .value();
 
         if (_.isEmpty(foundUser)) {
-            User.db.get('users')
+            ModelUser.db.get('users')
                 .push({
                     username: this.username,
                     name: this.name,
@@ -62,14 +72,14 @@ export default class User {
     }
 
     static findOne(username, password) {
-        let foundUser = User.db.get('users')
+        let foundUser = ModelUser.db.get('users')
             .find({ username: username, password: password })
             .value();
 
         if (!_.isEmpty(foundUser)) {
-            return new User(foundUser.name, foundUser.username, foundUser.password);
+            return new ModelUser(foundUser.name, foundUser.username, foundUser.password);
         }
 
-        return false;
+        return null;
     }
 }
