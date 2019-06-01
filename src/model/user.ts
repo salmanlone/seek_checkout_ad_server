@@ -1,14 +1,3 @@
-// const low = require('lowdb');
-// const FileSync = require('lowdb/adapters/FileSync');
-
-
-// const adapter = new FileSync('users.json');
-// const db = low(adapter);
-
-// Set some defaults (required if your JSON file is empty)
-// db.defaults({ users: [] })
-//     .write()
-
 import Database from "../utils/database";
 import { LowdbSync } from "lowdb";
 const _ = require('lodash');
@@ -21,14 +10,22 @@ const db: LowdbSync<null> = Object.freeze(dbDef.Instance);
 
 export default class User {
 
-    name: string;
-    username: string;
-    password: string;
+    private name: string;
+    private username: string;
+    private password: string;
 
     constructor(name: string, username: string, password: string) {
         this.name = name;
         this.username = username;
         this.password = password;
+    }
+
+    get Username() {
+        return this.username;
+    }
+
+    get Name() {
+        return this.name;
     }
 
     save() {
