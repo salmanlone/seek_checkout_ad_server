@@ -1,15 +1,29 @@
 import Database from "../utils/database";
-import { LowdbSync } from "lowdb";
 const _ = require('lodash');
 
-const dbDef: Database = new Database(
-    'users.json',
-    { users: [] }
-);
-const db: LowdbSync<null> = Object.freeze(dbDef.Instance);
+class UserDb {
+    static instance = null;
+
+    constructor() {
+        if (!UserDb.instance) {
+
+            const dbDef: Database = new Database(
+                process.env.TEST_DB || 'users.json',
+                { users: [] }
+            );
+
+            UserDb.instance = dbDef.Instance;
+        }
+    }
+
+    get Instance() {
+        return UserDb.instance;
+    }
+}
 
 export default class User {
 
+    private static db = new UserDb().Instance;
     private name: string;
     private username: string;
     private password: string;
@@ -29,29 +43,33 @@ export default class User {
     }
 
     save() {
-        let existentUser = db.get('users')
-            .value()
+        let foundUser = User.db.get('users')
             .find({ username: this.username })
+            .value();
 
-        if (_.empty(existentUser)) {
-            db.get('users')
-                .value()
+        if (_.isEmpty(foundUser)) {
+            User.db.get('users')
                 .push({
                     username: this.username,
                     name: this.name,
                     password: this.password
                 })
                 .write();
+            return true;
         }
 
         throw new Error("User already exists, try logging in instead?");
     }
 
     static findOne(username, password) {
-        let existentUser = db.get('users')
-            .value()
-            .find({ username: username, password: password})
+        let foundUser = User.db.get('users')
+            .find({ username: username, password: password })
+            .value();
 
-        return !_.empty(existentUser);
+        if (!_.isEmpty(foundUser)) {
+            return new User(foundUser.name, foundUser.username, foundUser.password);
+        }
+
+        return false;
     }
 }
