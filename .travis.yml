@@ -20,3 +20,4 @@ deploy:
   app: seekasia-assignment-server
   on:
     repo: salmanlone/seek_checkout_ad_server
+    all_branches: true
