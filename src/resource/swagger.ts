@@ -34,7 +34,7 @@ export default class Swagger {
                 version: '1.0.0',
                 description: 'Seek assignment (server)',
             },
-            host: 'localhost:9000',
+            host: 'https://seekasia-assignment-server.herokuapp.com',
             basePath: '/',
         };
 
