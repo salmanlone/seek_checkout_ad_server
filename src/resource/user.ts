@@ -7,4 +7,9 @@ export default class User {
             return next();
         });
     }
+
+    static create(username: string, password: string, name:string)
+    {
+
+    }
 }
