@@ -1,0 +1,25 @@
+language: node_js
+sudo: required
+node_js:
+  - "10"
+before_install:
+  - sudo apt-key adv --fetch-keys http://dl.yarnpkg.com/debian/pubkey.gpg
+  - echo "deb http://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+  - sudo apt-get update -qq
+  - sudo apt-get install -y -qq yarn
+cache:
+  yarn: true
+install:
+  - npm install
+script:
+  - npm run ts-test
+  - npm run build
+  - npm run prepare-swagger
+deploy:
+  provider: heroku
+  api_key:
+    secure: ${HEROKU_API_KEY}
+  app: seekasia-assignment-server
+  on:
+    repo: salmanlone/seek_checkout_ad_server
+    all_branches: true
