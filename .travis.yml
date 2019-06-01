@@ -13,6 +13,7 @@ install:
   - npm install
 script:
   - npm run ts-test
+  - npm run build
 deploy:
   provider: heroku
   api_key:
