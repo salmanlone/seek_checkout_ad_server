@@ -1,4 +1,5 @@
 import { Server, Request, Response, Next } from 'restify';
+import HttpBasicAuth from '../utils/http_basic_auth';
 import ModelCustomer from '../model/customer';
 import _ = require('lodash');
 
@@ -21,18 +22,13 @@ export default class Customer {
          * @swagger
          * /customer:
          *   get:
+         *     security:
+         *       - basicAuth:[]
          *     tags:
          *       - customers
          *     description: get all customers
          *     produces:
          *       - application/json
-         *     parameters:
-         *     - in: "body"
-         *       name: "body"
-         *       description: "Customers object array"
-         *       required: true
-         *       schema:
-         *          $ref: '#/definitions/customers'
          *     responses:
          *       200:
          *         description: Customers object array
@@ -41,7 +37,7 @@ export default class Customer {
          *       400:
          *         description: No customer exist.
          */
-        server.get('/customers', function create(req: Request, res: Response, next: Next) {
+        server.get('/customers', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
             res.send(ModelCustomer.GetCustomers());
             return next();
         });
@@ -70,7 +66,7 @@ export default class Customer {
          *       400:
          *         description: The customer does not exist.
          */
-        server.get('/customer/:id', function create(req: Request, res: Response, next: Next) {
+        server.get('/customer/:id', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
             let response = ModelCustomer.GetCustomer(req.params.id);
 
             if (!_.isNull(response)) {
@@ -106,7 +102,7 @@ export default class Customer {
          *       400:
          *         description: customer not found
          */
-        server.post('/customer', function create(req: Request, res: Response, next: Next) {
+        server.post('/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
             Customer.newCustomer(
                 req.body.id,
                 req.body.name,
@@ -139,7 +135,7 @@ export default class Customer {
          *       400:
          *         description: customer not found
          */
-        server.put('/customer', function create(req: Request, res: Response, next: Next) {
+        server.put('/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
             let response = ModelCustomer.UpdateCustomer(req.body.id, req.body.code);
 
             if (!_.isNull(response)) {
@@ -174,7 +170,7 @@ export default class Customer {
          *       400:
          *         description: customer not found
          */
-        server.del('/customer', function create(req: Request, res: Response, next: Next) {
+        server.del('/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
             // res.send('List the deals associated with the customers');
             let response = ModelCustomer.DeleteCustomer(req.body.id);
 
