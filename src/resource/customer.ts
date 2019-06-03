@@ -1,6 +1,7 @@
 import { Server, Request, Response, Next } from 'restify';
 import HttpBasicAuth from '../utils/http_basic_auth';
 import ModelCustomer from '../model/customer';
+import ModelUser from '../model/user';
 import _ = require('lodash');
 
 export default class Customer {
@@ -84,7 +85,7 @@ export default class Customer {
          *   post:
          *     tags:
          *       - customer
-         *     description: Create new ad customer
+         *     description: Creates a new customer in the system
          *     produces:
          *       - application/json
          *     parameters:
@@ -93,21 +94,28 @@ export default class Customer {
          *       description: "customer object"
          *       required: true
          *       schema:
-         *          $ref: '#/definitions/customers'
+         *          $ref: '#/definitions/customer_create_tupple'
          *     responses:
          *       200:
-         *         description: Deals object array
+         *         description: 
          *         schema:
-         *           $ref: '#/definitions/customers'
+         *           type: "object"
+         *           properties:
+         *             message:
+         *               type: string
+         *               description: A success message for the created customer
          *       400:
-         *         description: customer not found
+         *         description: Customer already exists
          */
         server.post('/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
             Customer.newCustomer(
-                req.body.id,
-                req.body.name,
-                req.body.code,
-                res);
+                req.body.username,
+                req.body.password,
+                req.body.name
+            );
+            res.send({
+                'message': `User ${req.body.username} created successfully`
+            })
             return next();
         });
 
@@ -189,22 +197,12 @@ export default class Customer {
         });
     }
 
-    static newCustomer(id: string, name: string, code: string,
-        res: Response) {
-        let foundDeal = ModelCustomer.findOne(id);
-
-        if (_.isEmpty(foundDeal)) {
-            let model = new ModelCustomer(id, name, code);
-            model.Save();
-
-            res.send({
-                "id": id,
-                "name": name,
-                "code": code
-            });
-            return;
-        }
-
-        res.send(404);
+    static newCustomer(username: string, password: string, name: string) {
+        let user = new ModelUser(
+            name,
+            username,
+            password
+        );
+        user.save();
     }
 }

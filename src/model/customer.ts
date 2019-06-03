@@ -1,26 +1,6 @@
-import Database from "../utils/database";
+import UserDb from '../utils/user_db';
 import ModelDeal from "./deal";
 const _ = require('lodash');
-
-class CustomerDb {
-    static instance = null;
-
-    constructor() {
-        if (!CustomerDb.instance) {
-
-            const dbDef: Database = new Database(
-                process.env.TEST_DB || 'customer.json',
-                { customers: [] }
-            );
-
-            CustomerDb.instance = dbDef.Instance;
-        }
-    }
-
-    get Instance() {
-        return CustomerDb.instance;
-    }
-}
 
 /**
  * @swagger
@@ -36,30 +16,26 @@ class CustomerDb {
  */
 
 export default class ModelCustomer {
-    private static db = new CustomerDb().Instance;
-    private id: string;
+    private static db = new UserDb().Instance;
+    private username: string;
     private name: string;
-    private code: string;
+    private password: string;
 
-    constructor(id: string, name: string, code: string) {
-        this.id = id;
+    constructor(username:string, password: string, name: string = '') {
         this.name = name;
-        this.code = code;
-    }
-
-    get Id() {
-        return this.id;
+        this.username = username;
+        this.password = password;
     }
 
     get Name() {
         return this.name;
     }
 
-    get Code() {
-        return this.code;
+    get Username() {
+        return this.username;
     }
 
-    Save() {
+    save() {
         let foundCustomer = ModelCustomer.findOne(this.id);
 
         if (_.isEmpty(foundCustomer)) {
