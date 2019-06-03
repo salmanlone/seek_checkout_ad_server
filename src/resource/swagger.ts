@@ -45,7 +45,8 @@ export default class Swagger {
             // path to the API docs
             apis: [
                 './src/resource/*.ts',
-                './src/model/*.ts'
+                './src/model/*.ts',
+                './src/utils/*.ts'
             ],
 
         };
