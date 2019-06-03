@@ -45,6 +45,12 @@ export default class ModelUser {
         return this.name;
     }
 
+    delete() {
+        return ModelUser.db.get('users')
+        .remove({ username: this.username, password: this.password, name: this.name })
+        .write();
+    }
+
     save() {
         let foundUser = ModelUser.db.get('users')
             .find({ username: this.username })

@@ -125,72 +125,39 @@ export default class Customer {
 
         /**
          * @swagger
-         * /customer:
-         *   put:
-         *     tags:
-         *       - customer
-         *     description: Update customer
-         *     produces:
-         *       - application/json
-         *     parameters:
-         *     - in: "body"
-         *       name: "body"
-         *       description: "Update customer by customer id"
-         *       required: true
-         *       schema:
-         *          $ref: '#/definitions/customers'
-         *     responses:
-         *       200:
-         *         description: Customer object
-         *         schema:
-         *           $ref: '#/definitions/customers'
-         *       400:
-         *         description: customer not found
-         */
-        server.put('/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
-            let response = ModelCustomer.UpdateCustomer(req.body.id, req.body.code);
-
-            if (!_.isNull(response)) {
-                res.send(response);
-                return;
-            }
-            res.send(404, `The customer '${req.body.id}' or the deal '${req.body.code}' does not exist, try adding new instead?`);
-            return next();
-        });
-
-        /**
-         * @swagger
-         * /customer:
+         * /customer/{username}:
          *   delete:
          *     tags:
          *       - customer
-         *     description: Delete customer
+         *     description: Delete customer by username
          *     produces:
          *       - application/json
          *     parameters:
-         *     - in: "body"
-         *       name: "body"
-         *       description: "Delete customer by customer id"
-         *       required: true
-         *       schema:
-         *          $ref: '#/definitions/customers'
+         *       - in: path
+         *         name: username
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: The username for the customer
          *     responses:
          *       200:
          *         description: Return true on deleteion otherwise false.
          *         schema:
-         *           $ref: '#/definitions/customers'
+         *           type: boolean
          *       400:
          *         description: customer not found
          */
-        server.del('/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
-            // res.send('List the deals associated with the customers');
-            let response = ModelCustomer.DeleteCustomer(req.body.id);
+        server.del('/customer/:username', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
 
-            if (!_.isNull(response)) {
-                res.send(200, `${req.body.id} deleted sucessfully. `);
-                return;
+            let foundUser = ModelUser.findOneByUsername(req.params.username);
+
+            if (!_.isNull(foundUser)) {
+                foundUser.delete();
+                res.send(200, `User '${req.params.username}' deleted sucessfully`);
+                return next();
             }
-            res.send(404, "The deal does not exist, try delete with an existing one.");
+
+            res.send(404, "The customer does not exist, check username and try again");
             return next();
         });
 
