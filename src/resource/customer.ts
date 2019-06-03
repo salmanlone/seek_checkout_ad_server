@@ -1,6 +1,6 @@
 import { Server, Request, Response, Next } from 'restify';
 import HttpBasicAuth from '../utils/http_basic_auth';
-import ModelCustomer from '../model/customer';
+// import ModelCustomer from '../model/customer';
 import ModelUser from '../model/user';
 import _ = require('lodash');
 
@@ -119,7 +119,7 @@ export default class Customer {
             );
             res.json({
                 'message': `User ${req.body.username} created successfully`
-            })
+            });
             return next();
         });
 

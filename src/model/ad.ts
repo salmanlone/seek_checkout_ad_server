@@ -9,7 +9,7 @@ class AdDb {
 
             const dbDef: Database = new Database(
                 process.env.TEST_DB || 'ad.json',
-                { ads: [] }
+                { ads: [], last_id: 1 }
             );
 
             AdDb.instance = dbDef.Instance;
@@ -22,28 +22,45 @@ class AdDb {
 }
 
 /**
- * @swagger
- * definition:
- *   ad:
- *     properties:
- *       id:
- *         type: string
- *       name:
- *         type: string
- *       price:
- *         type: string
- */
+  * @swagger
+  * definition:
+  *   ad_create_tupple:
+  *     properties:
+  *       name:
+  *         type: string
+  *       price:
+  *         type: integer
+  *       currency:
+  *         type: string
+  */
+
+/**
+  * @swagger
+  * definition:
+  *   ad_tupple:
+  *     properties:
+  *       name:
+  *         type: string
+  *       price:
+  *         type: integer
+  *       id:
+  *         type: integer
+  *       currency:
+  *         type: string
+  */
 
 export default class ModelAd {
     private static db = new AdDb().Instance;
-    private id: string;
+    private id: number;
     private name: string;
-    private price: string;
+    private price: number;
+    private currency: string;
 
-    constructor(id: string, name: string, price: string) {
+    constructor(name: string, price: number, currency: string, id: number = null) {
         this.id = id;
         this.name = name;
         this.price = price;
+        this.currency = currency;
     }
 
     get Id() {
@@ -58,72 +75,98 @@ export default class ModelAd {
         return this.price;
     }
 
-    Save() {
-        let foundAd = ModelAd.db.get('ads')
-            .find({ id: this.id })
-            .value();
+    get Currency() {
+        return this.currency;
+    }
 
-        if (_.isEmpty(foundAd)) {
-            ModelAd.db.get('ads')
+    delete() {
+        if (this.id == null) {
+            // No need to delete, its in memory
+            return;
+        }
+        else {
+            return ModelAd.db.get('ads')
+                .remove({
+                    id: this.id,
+                    name: this.name,
+                    price: this.price,
+                    currency: this.currency
+                })
+                .write();
+        }
+    }
+
+    save() {
+        if (this.id == null) {
+            // A freshly created Ad
+            this.id = ModelAd.db.get('last_id').value();
+            ModelAd.db
+                .get('ads')
                 .push({
                     id: this.id,
                     name: this.name,
-                    price: this.price
-                }).write();
-
-            return true;
-        }
-    }
-
-    static GetAds() {
-        return ModelAd.db.get('ads');
-    }
-
-    static GetAd(id: string) {
-        let foundAd = ModelAd.findOne(id);
-
-        if (!_.isEmpty(foundAd)) {
-            return foundAd;
-        }
-
-        return null;
-    }
-
-    static UpdateAd(id: string, price: string) {
-        let foundad = ModelAd.findOne(id);
-
-        if (!_.isEmpty(foundad)) {
-            let udpatedCustomer = ModelAd.db.get('ads')
-                .find({ id: id })
-                .assign({ price: price })
+                    price: this.price,
+                    currency: this.currency
+                })
                 .write();
-            return udpatedCustomer;
-        }
 
-        return null;
-    }
-
-    static DeleteAd(id: string) {
-        let foundAd = ModelAd.findOne(id);
-
-        if (!_.isEmpty(foundAd)) {
-            ModelAd.db.get('ads')
-                .remove({ id: id })
+            ModelAd.db.update('last_id', n => n + 1)
                 .write();
 
             return true;
         }
+        else {
+            // An ad update
+            let foundAd = ModelAd.db
+                .get('ads')
+                .find({ id: this.id })
+                .value();
 
-        return null;
+            if (_.isEmpty(foundAd)) {
+                throw new Error("An error occurred with dirty data please try the immutable ad");
+            }
+
+            let currentAds = ModelAd.db
+                .get('ads')
+                .value();
+
+            let updateAd = this;
+
+            let updatedAds = _.map(currentAds, (ad) => {
+                if (_.isEqual(updateAd.id, ad.id)) {
+                    return {
+                        id: updateAd.id,
+                        name: updateAd.name,
+                        price: updateAd.price,
+                        currency: updateAd.currency
+                    };
+                }
+                return ad;
+            });
+
+            ModelAd.db.set('ads', updatedAds).write();
+            return true;
+        }
     }
 
-    static findOne(id) {
+    static findAll() {
+        return ModelAd.db
+            .get('ads')
+            .value();
+    }
+
+    static findOne(id: number) {
         let foundAd = ModelAd.db.get('ads')
             .find({ id: id })
             .value();
 
         if (!_.isEmpty(foundAd)) {
-            return new ModelAd(foundAd.id, foundAd.name, foundAd.price);
+            return new ModelAd(
+                foundAd.name,
+                foundAd.price,
+                foundAd.currency,
+                foundAd.id
+            );
         }
 
         return null;

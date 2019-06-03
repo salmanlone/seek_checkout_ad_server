@@ -1,4 +1,5 @@
 import { Server, Request, Response, Next } from 'restify';
+import HttpBasicAuth from '../utils/http_basic_auth';
 import ModelAd from '../model/ad';
 import _ = require('lodash');
 
@@ -6,23 +7,11 @@ export default class Ad {
 
     static ApplyRoutes(server: Server) {
         /**
-        * @swagger
-        * definition:
-        *   ad:
-        *     properties:
-        *       id:
-        *         type: string
-        *       name:
-        *         type: string
-        *       price:
-        *         type: string
-        * 
-        */
-
-        /**
          * @swagger
          * /ad:
          *   post:
+         *     security:
+         *       - basicAuth:[]
          *     tags:
          *       - ad
          *     description: Create new ad
@@ -34,17 +23,29 @@ export default class Ad {
          *       description: "Ad object"
          *       required: true
          *       schema:
-         *          $ref: '#/definitions/ads'
+         *          $ref: '#/definitions/ad_create_tupple'
          *     responses:
          *       200:
-         *         description: Ad object
+         *         description:
          *         schema:
-         *           $ref: '#/definitions/Ad'
+         *           type: "object"
+         *           properties:
+         *             message:
+         *               type: string
+         *               description: A success message for the created ad
          *       400:
          *         description: Ad not found
          */
-        server.post('/ad', function create(req: Request, res: Response, next: Next) {
-            Ad.addAd(req.body.id, req.body.name, req.body.price, res);
+        server.post('/ad', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
+            Ad.create(
+                req.body.name,
+                req.body.price,
+                req.body.currency,
+                res
+            );
+            res.json({
+                'message': `Ad ${req.body.name} created successfully`
+            });
             return next();
         });
 
@@ -52,35 +53,31 @@ export default class Ad {
          * @swagger
          * /ad:
          *   get:
+         *     security:
+         *       - basicAuth:[]
          *     tags:
          *       - ads
          *     description: Get list of ads
          *     produces:
          *       - application/json
-         *     parameters:
-         *     - in: "body"
-         *       name: "body"
-         *       description: "Ads object array"
-         *       required: true
-         *       schema:
-         *          $ref: '#/definitions/ads'
          *     responses:
          *       200:
-         *         description: Ads object array
+         *         description: Array of ads
          *         schema:
-         *           $ref: '#/definitions/Ads'
+         *           type: "array"
+         *           items:
+         *              $ref: '#/definitions/ad_tupple'
          *       400:
          *         description: No ad found in system
          */
-        server.get('/ads', function create(req: Request, res: Response, next: Next) {
-            // res.send('Brings back the available ads in the system');
-            res.send(ModelAd.GetAds());
+        server.get('/ad', function create(req: Request, res: Response, next: Next) {
+            res.json(ModelAd.findAll());
             return next();
         });
 
         /**
          * @swagger
-         * /ad:
+         * /ad/{ad_id}:
          *   get:
          *     tags:
          *       - ad
@@ -88,26 +85,26 @@ export default class Ad {
          *     produces:
          *       - application/json
          *     parameters:
-         *     - in: "body"
-         *       name: "body"
-         *       description: "ad object"
-         *       required: true
-         *       schema:
-         *          $ref: '#/definitions/ads'
+         *       - in: path
+         *         name: ad_id
+         *         schema:
+         *           type: number
+         *         required: true
+         *         description: The ad id to retreive
          *     responses:
          *       200:
-         *         description: Customer object
+         *         description: Ad object
          *         schema:
-         *           $ref: '#/definitions/ads'
+         *           $ref: '#/definitions/ad_tupple'
          *       400:
          *         description: The ad does not exist.
          */
-        server.get('/ad/:id', function create(req: Request, res: Response, next: Next) {
-            let response = ModelAd.GetAd(req.params.id);
+        server.get('/ad/:ad_id', function create(req: Request, res: Response, next: Next) {
+            let foundAd = ModelAd.findOne(req.params.ad_id);
 
-            if (!_.isNull(response)) {
-                res.send(response);
-                return;
+            if (!_.isNull(foundAd)) {
+                res.json(foundAd);
+                return next();
             }
 
             res.send(404, "The ad does not exist, try adding new instead?");
@@ -139,14 +136,14 @@ export default class Ad {
          *         description: ad not found
          */
         server.put('/ad', function create(req: Request, res: Response, next: Next) {
-            let response = ModelAd.UpdateAd(req.body.id, req.body.price);
+            // let response = ModelAd.UpdateAd(req.body.id, req.body.price);
 
-            if (!_.isNull(response)) {
-                res.send(response);
-                return;
-            }
-            res.send(404, `The customer '${req.body.id}' does not exist, try adding new instead?`);
-            return next();
+            // if (!_.isNull(response)) {
+            //     res.send(response);
+            //     return;
+            // }
+            // res.send(404, `The customer '${req.body.id}' does not exist, try adding new instead?`);
+            // return next();
         });
 
         /**
@@ -174,32 +171,23 @@ export default class Ad {
          *         description: ad not found
          */
         server.del('/ad', function create(req: Request, res: Response, next: Next) {
-            let response = ModelAd.DeleteAd(req.body.id);
+            // let response = ModelAd.DeleteAd(req.body.id);
 
-            if (!_.isNull(response)) {
-                res.send(200, `${req.body.id} deleted sucessfully. `);
-                return;
-            }
-            res.send(404, "The ad does not exist, try delete with an existing one.");
-            return next();
+            // if (!_.isNull(response)) {
+            //     res.send(200, `${req.body.id} deleted sucessfully. `);
+            //     return;
+            // }
+            // res.send(404, "The ad does not exist, try delete with an existing one.");
+            // return next();
         });
     }
 
-    static addAd(id: string, name: string, price: string, res: Response) {
-        let foundDeal = ModelAd.findOne(id);
-
-        if (_.isEmpty(foundDeal)) {
-            let model = new ModelAd(id, name, price);
-            model.Save();
-
-            res.send({
-                "id": id,
-                "name": name,
-                "price": price
-            });
-            return;
-        }
-
-        res.send(404);
+    static create(name: string, price: number, currency: string, res: Response) {
+        let adToBeCreated = new ModelAd(
+            name,
+            price,
+            currency
+        );
+        adToBeCreated.save();
     }
 }
