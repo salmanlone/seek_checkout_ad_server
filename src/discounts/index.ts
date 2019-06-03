@@ -2,18 +2,17 @@ import { BaseDiscount, DiscountResult } from "./base_discount";
 import ModelAd from "../model/ad";
 const _ = require('lodash');
 
-class Discounts {
-    private discounts: BaseDiscount[];
+export default class Discounts {
+    private discounts: Array<BaseDiscount>;
 
-    constructor(discounts: BaseDiscount[]) {
+    constructor(discounts: Array<BaseDiscount>) {
         this.discounts = discounts;
     }
 
-    apply(cart: ModelAd[]): DiscountResult {
+    apply(cart: Array<ModelAd>): DiscountResult {
         let formulatedResult: DiscountResult = {
             cart: cart,
             currentTotal: 0,
-            resultModified: false
         };
         
         let discount: BaseDiscount;

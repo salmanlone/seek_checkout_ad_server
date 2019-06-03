@@ -18,27 +18,30 @@ export default class XForYDiscount extends BaseDiscount {
         this.yCount = yCount;
     }
 
-    executeDiscount(cart: ModelAd[], previousTotal: number): DiscountResult {
+    executeDiscount(cart: Array<ModelAd>, previousTotal: number): DiscountResult {
         let groupedCart = BaseDiscount.groupTheCart(cart);
 
         let formulatedResult: DiscountResult = {
             cart: null,
-            currentTotal: previousTotal,
-            resultModified: false
+            currentTotal: previousTotal
         };
+
+        let processed = false;
 
         // Check if the rule ad name exists
         if (_.has(groupedCart, this.ad.Name)) {
             // Check while the count is appropriate
             while (_.size(groupedCart[this.ad.Name]) >= this.xCount) {
                 // Lets reduce the items and return the cart back with the new result
-                groupedCart[this.ad.Name] =  _.slice(groupedCart[this.ad.Name], 0, this.xCount);
+                groupedCart[this.ad.Name] =  _.slice(groupedCart[this.ad.Name], this.xCount);
                 formulatedResult.currentTotal += this.ad.Price * this.yCount;
-                formulatedResult.resultModified = true;
             }
+
+            formulatedResult.cart = BaseDiscount.ungroupTheCart(groupedCart);
+            processed = true;
         }
 
-        if (!formulatedResult.resultModified) {
+        if (!processed) {
             formulatedResult.cart = cart;
         }
 

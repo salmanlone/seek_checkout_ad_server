@@ -2,9 +2,8 @@ import ModelAd from "../model/ad";
 const _ = require('lodash');
 
 export interface DiscountResult {
-    cart: ModelAd[];
+    cart: Array<ModelAd>;
     currentTotal: number;
-    resultModified: boolean;
 }
 
 export abstract class BaseDiscount {
@@ -19,9 +18,9 @@ export abstract class BaseDiscount {
         return this.discountType;
     }
 
-    abstract executeDiscount(cart: ModelAd[], previousTotal: number): DiscountResult;
+    abstract executeDiscount(cart: Array<ModelAd>, previousTotal: number): DiscountResult;
 
-    protected static groupTheCart(cart: ModelAd[]) {
+    protected static groupTheCart(cart: Array<ModelAd>) {
         return _.groupBy(cart, (ad: ModelAd) => ad.Name);
     }
 

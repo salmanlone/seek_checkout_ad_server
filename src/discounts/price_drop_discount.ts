@@ -15,7 +15,7 @@ export default class PriceDropDiscount extends BaseDiscount {
         this.countOrMore = countOrMore;
     }
 
-    executeDiscount(cart: ModelAd[], previousTotal: number): DiscountResult {
+    executeDiscount(cart: Array<ModelAd>, previousTotal: number): DiscountResult {
         let groupedCart = BaseDiscount.groupTheCart(cart);
 
         // Check if the rule ad name exists
@@ -29,8 +29,7 @@ export default class PriceDropDiscount extends BaseDiscount {
                 // Lets ungroup the cart as it was
                 let formulatedResult: DiscountResult = {
                     cart: BaseDiscount.ungroupTheCart(groupedCart),
-                    currentTotal: previousTotal + calcPrice,
-                    resultModified: true
+                    currentTotal: previousTotal + calcPrice
                 };
                 return formulatedResult;
             }
@@ -38,8 +37,7 @@ export default class PriceDropDiscount extends BaseDiscount {
 
         return {
             cart: cart,
-            currentTotal: previousTotal,
-            resultModified: false
+            currentTotal: previousTotal
         };
     }
 }
