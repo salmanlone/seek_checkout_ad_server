@@ -36,18 +36,18 @@ export default class ModelCustomer {
     }
 
     save() {
-        let foundCustomer = ModelCustomer.findOne(this.id);
+        // let foundCustomer = ModelCustomer.findOne(this.id);
 
-        if (_.isEmpty(foundCustomer)) {
-            ModelCustomer.db.get('customers')
-                .push({
-                    id: this.id,
-                    name: this.name,
-                    code: this.code
-                }).write();
+        // if (_.isEmpty(foundCustomer)) {
+        //     ModelCustomer.db.get('customers')
+        //         .push({
+        //             id: this.id,
+        //             name: this.name,
+        //             code: this.code
+        //         }).write();
 
-            return true;
-        }
+        //     return true;
+        // }
     }
 
     static GetCustomers() {

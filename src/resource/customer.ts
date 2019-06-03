@@ -27,52 +27,56 @@ export default class Customer {
          *       - basicAuth:[]
          *     tags:
          *       - customers
-         *     description: get all customers
+         *     description: Get all customers
          *     produces:
          *       - application/json
          *     responses:
          *       200:
          *         description: Customers object array
          *         schema:
-         *           $ref: '#/definitions/customers'
+         *           type: "array"
+         *           items:
+         *              $ref: '#/definitions/user'
          *       400:
-         *         description: No customer exist.
+         *         description: No customer exists.
          */
-        server.get('/customers', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
-            res.send(ModelCustomer.GetCustomers());
+        server.get('/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
+            res.json(ModelUser.findAll());
             return next();
         });
 
         /**
          * @swagger
-         * /customer:
+         * /customer/{username}:
          *   get:
+         *     security:
+         *       - basicAuth:[]
          *     tags:
          *       - customer
-         *     description: get customer by id
+         *     parameters:
+         *       - in: path
+         *         name: username
+         *         schema:
+         *           type: string
+         *         required: true
+         *         description: The username for the customer
+         *     description: Gets customer by username
          *     produces:
          *       - application/json
-         *     parameters:
-         *     - in: "body"
-         *       name: "body"
-         *       description: "Customer object"
-         *       required: true
-         *       schema:
-         *          $ref: '#/definitions/customers'
          *     responses:
          *       200:
          *         description: Customer object
          *         schema:
-         *           $ref: '#/definitions/customers'
+         *           $ref: '#/definitions/user'
          *       400:
          *         description: The customer does not exist.
          */
-        server.get('/customer/:id', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
-            let response = ModelCustomer.GetCustomer(req.params.id);
+        server.get('/customer/:username', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
+            let foundUser = ModelUser.findOneByUsername(req.params.username);
 
-            if (!_.isNull(response)) {
-                res.send(response);
-                return;
+            if (!_.isNull(foundUser)) {
+                res.json(foundUser);
+                return next();
             }
 
             res.send(404, "The customer does not exist, try adding new instead?");
@@ -113,7 +117,7 @@ export default class Customer {
                 req.body.password,
                 req.body.name
             );
-            res.send({
+            res.json({
                 'message': `User ${req.body.username} created successfully`
             })
             return next();

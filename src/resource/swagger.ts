@@ -3,6 +3,8 @@ const swaggerJSDoc = require('swagger-jsdoc');
 const restify = require('restify');
 const path = require('path');
 
+// seekasia-assignment-server.herokuapp.com
+
 export default class Swagger {
     static ApplyRoutes(server: Server) {
         server.get('/swagger.json', function create(req: Request, res: Response, next: Next) {
@@ -34,7 +36,7 @@ export default class Swagger {
                 version: '1.0.0',
                 description: 'Seek assignment (server)',
             },
-            host: 'seekasia-assignment-server.herokuapp.com',
+            host: 'localhost:9000',
             basePath: '/',
         };
 

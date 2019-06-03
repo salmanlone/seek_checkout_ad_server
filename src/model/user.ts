@@ -75,4 +75,24 @@ export default class ModelUser {
 
         return null;
     }
+
+    static findOneByUsername(username) {
+        let foundUser = ModelUser.db.get('users')
+            .find({ username: username })
+            .value();
+
+        if (!_.isEmpty(foundUser)) {
+            return new ModelUser(foundUser.name, foundUser.username, foundUser.password);
+        }
+
+        return null;
+    }
+
+    static findAll() {
+        let users = ModelUser.db
+            .get('users')
+            .value();
+
+        return _.map(users, u => new ModelUser(u.name, u.username, u.password));
+    }
 }
