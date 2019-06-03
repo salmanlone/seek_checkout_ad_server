@@ -1,0 +1,46 @@
+{
+  "deals": [
+    {
+      "id": "classic",
+      "name": "Classic Ad",
+      "price": "269.99",
+      "type": "classic",
+      "code": "3on2"
+    },
+    {
+      "id": "classic",
+      "name": "Classic Ad",
+      "price": "269.99",
+      "type": "classic",
+      "code": "5on4"
+    },
+    {
+      "id": "standout",
+      "name": "Standout Ad",
+      "price": "299.99",
+      "type": "standout",
+      "code": "drop299"
+    },
+    {
+      "id": "standout",
+      "name": "Standout Ad",
+      "price": "309.99",
+      "type": "standout",
+      "code": "drop309"
+    },
+    {
+      "id": "premium",
+      "name": "Premium Ad",
+      "price": "394.99",
+      "type": "premium",
+      "code": "gt3p"
+    },
+    {
+      "id": "premium",
+      "name": "Premium Ad",
+      "price": "379.99",
+      "type": "premium",
+      "code": "gt4p"
+    }
+  ]
+}
