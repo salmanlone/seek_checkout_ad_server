@@ -10,7 +10,9 @@
     "build": "rimraf build && tsc",
     "prepare-swagger": "node ./helper/prepare_swagger.js",
     "seed-server": "node ./helper/seed_server_data.js",
-    "heroku-postbuild": "npm run prepare-swagger && npm run seed-server"
+    "heroku-prebuild": "mv .env.heroku .env && npm run prepare-swagger",
+    "heroku-postbuild": "npm run seed-server",
+    "start-local-server": "npm run prepare-swagger && npm run seed-server && npm run start"
   },
   "repository": {
     "type": "git",
