@@ -1,25 +1,5 @@
-import Database from "../utils/database";
+import UserDb from '../utils/user_db';
 const _ = require('lodash');
-
-class UserDb {
-    static instance = null;
-
-    constructor() {
-        if (!UserDb.instance) {
-
-            const dbDef: Database = new Database(
-                process.env.TEST_DB || 'users.json',
-                { users: [] }
-            );
-
-            UserDb.instance = dbDef.Instance;
-        }
-    }
-
-    get Instance() {
-        return UserDb.instance;
-    }
-}
 
 /**
  * @swagger
@@ -29,6 +9,19 @@ class UserDb {
  *       name:
  *         type: string
  *       username:
+ *         type: string
+ */
+
+/**
+ * @swagger
+ * definition:
+ *   customer_create_tupple:
+ *     properties:
+ *       username:
+ *         type: string
+ *       name:
+ *         type: string
+ *       password:
  *         type: string
  */
 export default class ModelUser {
@@ -50,6 +43,12 @@ export default class ModelUser {
 
     get Name() {
         return this.name;
+    }
+
+    delete() {
+        return ModelUser.db.get('users')
+        .remove({ username: this.username, password: this.password, name: this.name })
+        .write();
     }
 
     save() {
@@ -81,5 +80,25 @@ export default class ModelUser {
         }
 
         return null;
+    }
+
+    static findOneByUsername(username) {
+        let foundUser = ModelUser.db.get('users')
+            .find({ username: username })
+            .value();
+
+        if (!_.isEmpty(foundUser)) {
+            return new ModelUser(foundUser.name, foundUser.username, foundUser.password);
+        }
+
+        return null;
+    }
+
+    static findAll() {
+        let users = ModelUser.db
+            .get('users')
+            .value();
+
+        return _.map(users, u => new ModelUser(u.name, u.username, u.password));
     }
 }

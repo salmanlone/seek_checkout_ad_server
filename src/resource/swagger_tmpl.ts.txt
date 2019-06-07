@@ -36,7 +36,7 @@ export default class Swagger {
                 version: '1.0.0',
                 description: 'Seek assignment (server)',
             },
-            host: 'localhost:9000',
+            host: '@swagger_host',
             basePath: '/',
         };
 

@@ -1,9 +1,24 @@
 {
   "users": [
     {
-      "username": "user",
-      "password": "pass",
-      "name": "Unknown"
+      "username": "unilever",
+      "name": "Unilever",
+      "password": "unilever"
+    },
+    {
+      "username": "apple",
+      "name": "Apple",
+      "password": "apple"
+    },
+    {
+      "username": "nike",
+      "name": "Nike",
+      "password": "nike"
+    },
+    {
+      "username": "ford",
+      "name": "Ford",
+      "password": "ford"
     }
   ]
 }
