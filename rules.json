@@ -1,0 +1,58 @@
+{
+  "rules": [
+    {
+      "username": "unilever",
+      "rule": "x_for_y",
+      "rule_params": {
+        "ad": "classic",
+        "xCount": 3,
+        "yCount": 2
+      }
+    },
+    {
+      "username": "apple",
+      "rule": "price_drop",
+      "rule_params": {
+        "ad": "standout",
+        "discountedPrice": 299.99,
+        "countOrMore": 1
+      }
+    },
+    {
+      "username": "nike",
+      "rule": "price_drop",
+      "rule_params": {
+        "ad": "premium",
+        "discountedPrice": 379.99,
+        "countOrMore": 4
+      }
+    },
+    {
+      "username": "ford",
+      "rule": "x_for_y",
+      "rule_params": {
+        "ad": "classic",
+        "xCount": 5,
+        "yCount": 4
+      }
+    },
+    {
+      "username": "ford",
+      "rule": "price_drop",
+      "rule_params": {
+        "ad": "standout",
+        "discountedPrice": 309.99,
+        "countOrMore": 1
+      }
+    },
+    {
+      "username": "ford",
+      "rule": "price_drop",
+      "rule_params": {
+        "ad": "premium",
+        "discountedPrice": 389.99,
+        "countOrMore": 3
+      }
+    }
+  ]
+}

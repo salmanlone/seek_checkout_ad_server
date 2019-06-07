@@ -39,7 +39,13 @@ export default class Checkout {
          *         description: Checkout failed
          */
         server.post('/checkout', function create(req: Request, res: Response, next: Next) {
-            let foundRules = ModelRule.findForCustomer(req.body.username);
+            let foundRules = [];
+
+            try {
+                foundRules = ModelRule.findForCustomer(req.body.username);
+            }
+            catch (e) {}
+            
             let convertedAds = _.map(req.body.cart, item => ModelAd.findOneByName(item));
             let discounts = new Dicsounts(foundRules);
     

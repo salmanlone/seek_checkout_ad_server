@@ -1,20 +1,23 @@
 {
   "ads": [
     {
-      "id": "classic",
-      "name": "Classic Ad",
-      "price": "$269.99"
+      "id": 2,
+      "name": "classic",
+      "price": 269.99,
+      "currency": "USD"
     },
     {
-      "id": "standout",
-      "name": "Standout Ad",
-      "price": "$322.99"
+      "id": 3,
+      "name": "standout",
+      "price": 322.99,
+      "currency": "USD"
     },
     {
-      "id": "premium",
-      "name": "Premium Ad",
-      "price": "$394.99"
+      "id": 4,
+      "name": "premium",
+      "price": 394.99,
+      "currency": "USD"
     }
   ],
-  "last_id": 1
+  "last_id": 4
 }

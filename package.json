@@ -8,7 +8,8 @@
     "ts-test": "mocha -r ts-node/register test/**/*.spec.ts",
     "start": "npm run build && node ./build/index.js",
     "build": "rimraf build && tsc",
-    "prepare-swagger": "node ./helper/prepare_swagger.js"
+    "prepare-swagger": "node ./helper/prepare_swagger.js",
+    "seed-server": "node ./helper/seed_server_data.js"
   },
   "repository": {
     "type": "git",
@@ -40,10 +41,12 @@
     "@types/mocha": "^5.2.7",
     "@types/restify-cors-middleware": "^1.0.1",
     "@typescript-eslint/parser": "^1.9.0",
+    "bluebird": "^3.5.5",
     "chai": "^4.2.0",
     "dotenv": "^8.0.0",
     "eslint": "^5.16.0",
     "mocha": "^6.1.4",
+    "node-fetch": "^2.6.0",
     "randomstring": "^1.1.5",
     "rimraf": "^2.6.3",
     "ts-node": "^8.2.0",
