@@ -42,6 +42,18 @@ export default class XForYDiscount extends BaseDiscount {
         );
     }
 
+    toString() {
+        return JSON.stringify({
+            type: XForYDiscount.NAME,
+            ad: {
+                name: this.ad.Name,
+                price: this.ad.Price
+            },
+            xCount: this.xCount,
+            yCount: this.yCount
+        });
+    }
+
     static description(): object {
         return {
             name: XForYDiscount.NAME,
@@ -56,25 +68,47 @@ export default class XForYDiscount extends BaseDiscount {
 
     static parameters_schema(): object {
         return {
-            "$schema": "http://json-schema.org/draft-04/schema#",
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "http://example.com/root.json",
             "type": "object",
-            "properties": {
-                "ad": {
-                    "type": "string"
-                },
-                "xCount": {
-                    "type": "integer"
-                },
-                "yCount": {
-                    "type": "integer"
-                }
-            },
+            "title": "The Root Schema",
             "required": [
                 "ad",
                 "xCount",
                 "yCount"
-            ]
-        };
+            ],
+            "properties": {
+                "ad": {
+                    "$id": "#/properties/ad",
+                    "type": "string",
+                    "title": "The Ad Schema",
+                    "default": "",
+                    "examples": [
+                        "classic"
+                    ],
+                    "pattern": "^(.*)$"
+                },
+                "xCount": {
+                    "$id": "#/properties/xCount",
+                    "type": "integer",
+                    "title": "The Xcount Schema",
+                    "default": 0,
+                    "examples": [
+                        3
+                    ]
+                },
+                "yCount": {
+                    "$id": "#/properties/yCount",
+                    "type": "integer",
+                    "title": "The Ycount Schema",
+                    "default": 0,
+                    "examples": [
+                        2
+                    ]
+                }
+            }
+        }
     }
 
     static parameter_validation(parameters: object): ParameterValidationResult {

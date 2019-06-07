@@ -16,9 +16,9 @@ const _ = require('lodash');
  *         type: string
  */
 
- interface RuleRealization {
-     rule: PriceDropDiscount | XForYDiscount;
- }
+interface RuleRealization {
+    rule: PriceDropDiscount | XForYDiscount;
+}
 
 /**
  * @swagger
@@ -40,7 +40,6 @@ export default class ModelRule {
     private parameters: object;
     private realizedRule: RuleRealization;
 
-
     constructor(rule_name: string, customer_username: string, parameters: object) {
         let foundUser = ModelUser.findOneByUsername(customer_username);
 
@@ -48,22 +47,38 @@ export default class ModelRule {
             throw new Error(`User ${customer_username} not found to file rule against`);
         }
 
-        let foundRule = _.findIndex(Rules, rule => {
+        let foundRuleIndex = _.findIndex(Rules, rule => {
             return _.isEqual(rule.NAME, rule_name);
         });
 
-        if (foundRule == -1) {
+        if (foundRuleIndex == -1) {
             throw new Error(`Rule ${rule_name} is not registered in the system`);
         }
 
+        let foundRule = Rules[foundRuleIndex];
+
         foundRule.parameter_validation(parameters);
 
-        this.rule = Rules[foundRule].NAME;
+        this.rule = foundRule.NAME;
         this.customer = foundUser;
         this.parameters = parameters;
-        this.realizedRule = foundRule.createFromParamsSchema(
-            parameters
-        );
+        this.realizedRule = {
+            rule: foundRule.createFromParamsSchema(
+                parameters
+            )
+        };
+    }
+
+    get ActualRule() {
+        return this.realizedRule.rule;
+    }
+
+    get RuleName() {
+        return this.rule;
+    }
+
+    get RuleParameters() {
+        return this.parameters;
     }
 
     delete() {
@@ -88,7 +103,7 @@ export default class ModelRule {
 
     static findForCustomer(username) {
         let rules = ModelRule.db.get('rules')
-            .find({
+            .filter({
                 username: username
             })
             .value();
@@ -96,11 +111,9 @@ export default class ModelRule {
         let result = [];
 
         if (!_.isEmpty(rules)) {
-            for (let rule of rules)
-            {
-                let foundRule = _.find(Rules, r => _.isEqual(r.NAME, rule));
-                if (!_.isEmpty(foundRule))
-                {
+            for (let rule of rules) {
+                let foundRule = _.find(Rules, r => _.isEqual(r.NAME, rule.rule));
+                if (!_.isEmpty(foundRule)) {
                     result.push(foundRule.createFromParamsSchema(
                         rule.rule_params
                     ));

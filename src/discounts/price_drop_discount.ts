@@ -39,6 +39,18 @@ export default class PriceDropDiscount extends BaseDiscount {
         );
     }
 
+    toString() {
+        return JSON.stringify({
+            type: PriceDropDiscount.NAME,
+            ad: {
+                name: this.ad.Name,
+                price: this.ad.Price
+            },
+            discountedPrice: this.discountedPrice,
+            countOrMore: this.countOrMore
+        });
+    }
+
     static description(): object {
         return {
             name: PriceDropDiscount.NAME,
@@ -52,24 +64,46 @@ export default class PriceDropDiscount extends BaseDiscount {
 
     static parameters_schema(): object {
         return {
-            "$schema": "http://json-schema.org/draft-04/schema#",
+            "definitions": {},
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "$id": "http://example.com/root.json",
             "type": "object",
-            "properties": {
-                "ad": {
-                    "type": "string"
-                },
-                "discountedPrice": {
-                    "type": "number"
-                },
-                "countOrMore": {
-                    "type": "integer"
-                }
-            },
+            "title": "The Root Schema",
             "required": [
                 "ad",
                 "discountedPrice",
                 "countOrMore"
-            ]
+            ],
+            "properties": {
+                "ad": {
+                    "$id": "#/properties/ad",
+                    "type": "string",
+                    "title": "The Ad Schema",
+                    "default": "",
+                    "examples": [
+                        "classic"
+                    ],
+                    "pattern": "^(.*)$"
+                },
+                "discountedPrice": {
+                    "$id": "#/properties/discountedPrice",
+                    "type": "number",
+                    "title": "The Discountedprice Schema",
+                    "default": 0.0,
+                    "examples": [
+                        299.99
+                    ]
+                },
+                "countOrMore": {
+                    "$id": "#/properties/countOrMore",
+                    "type": "integer",
+                    "title": "The Countormore Schema",
+                    "default": 0,
+                    "examples": [
+                        1
+                    ]
+                }
+            }
         };
     }
 

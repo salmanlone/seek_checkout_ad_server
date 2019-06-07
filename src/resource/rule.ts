@@ -1,10 +1,10 @@
 import { Server, Request, Response, Next } from 'restify';
 import HttpBasicAuth from '../utils/http_basic_auth';
 import { Rules } from '../discounts/index';
-import ModelUser from '../model/user';
+import ModelRule from '../model/rule';
 const _ = require('lodash');
 
-export default class Discount {
+export default class Rule {
     static ApplyRoutes(server: Server) {
 
         /**
@@ -15,6 +15,19 @@ export default class Discount {
         *       name:
         *         type: string
         *       description:
+        *         type: object
+        */
+
+        /**
+        * @swagger
+        * definition:
+        *   rule_create_tupple:
+        *     properties:
+        *       rule_name:
+        *         type: string
+        *       customer_username:
+        *         type: string
+        *       rule_parameters:
         *         type: object
         */
 
@@ -67,47 +80,59 @@ export default class Discount {
          *       - application/json
          *     responses:
          *       200:
-         *         description: The names of the rules
+         *         description: Rules associated with the user in system
          *         schema:
-         *           type: "object"
+         *           type: "array"
          *           properties:
          *             name:
          *               type: string
          *               description: The rule name
+         *             parameters:
+         *               type: object
+         *               description: The rule parameters to form it against
          *       400:
          *         description: Rules not found
          */
         server.get('/rule/customer/:customer_username', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
-            let foundUser = ModelUser.findOneByUsername(req.params.customer_username);
-
-            if (!_.isNull(foundUser)) {
-                foundUser.delete();
-                res.send(200, `User '${req.params.username}' deleted sucessfully`);
-                return next();
-            }
-
-            let result = [];
-
-            for (let rule of Rules) {
-                result.push({
-                    name: rule.NAME,
-                    description: rule.description()
-                });
-            }
-
-            res.json(result);
+            let foundRules = ModelRule.findForCustomer(req.params.customer_username);
+            res.json(foundRules);
             return next();
         });
 
-        
+        /**
+         * @swagger
+         * /rule/customer:
+         *   post:
+         *     tags:
+         *       - rule
+         *     description: Adds a rule associated with a customer in the system
+         *     produces:
+         *       - application/json
+         *     parameters:
+         *     - in: "body"
+         *       name: "body"
+         *       description: "User object to authenticate against"
+         *       required: true
+         *       schema:
+         *          $ref: '#/definitions/rule_create_tupple'
+         *     responses:
+         *       200:
+         *         description: User object
+         *         schema:
+         *           $ref: '#/definitions/user'
+         *       400:
+         *         description: User not found
+         */
+        server.post('/rule/customer', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
+            let newRule = new ModelRule(
+                req.body.rule_name,
+                req.body.customer_username,
+                req.body.rule_parameters
+            );
 
-            if (!_.isNull(foundUser)) {
-                foundUser.delete();
-                res.send(200, `User '${req.params.username}' deleted sucessfully`);
-                return next();
-            }
-
-            res.send(404, "The customer does not exist, check username and try again");
+            newRule.save();
+            res.send(200);
             return next();
+        });
     }
 }
