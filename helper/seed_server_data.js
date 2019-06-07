@@ -1,4 +1,3 @@
-const fetch = require('node-fetch');
 const Promise = require("bluebird");
 const fs = Promise.promisifyAll(require('fs'));
 const url = require('url');
