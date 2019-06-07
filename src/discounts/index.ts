@@ -2,6 +2,14 @@ import { BaseDiscount, DiscountResult } from "./base_discount";
 import ModelAd from "../model/ad";
 const _ = require('lodash');
 
+import PriceDropDiscount from "./price_drop_discount";
+import XforYDiscount from "./x_for_y_discount";
+
+export const Rules = [
+    PriceDropDiscount,
+    XforYDiscount
+];
+
 export default class Discounts {
     private discounts: Array<BaseDiscount>;
 

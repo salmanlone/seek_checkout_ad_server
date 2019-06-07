@@ -171,4 +171,21 @@ export default class ModelAd {
 
         return null;
     }
+
+    static findOneByName(name: string) {
+        let foundAd = ModelAd.db.get('ads')
+            .find({ name: name })
+            .value();
+
+        if (!_.isEmpty(foundAd)) {
+            return new ModelAd(
+                foundAd.name,
+                foundAd.price,
+                foundAd.currency,
+                foundAd.id
+            );
+        }
+
+        return null;
+    }
 }

@@ -166,6 +166,21 @@ export default class Customer {
             res.send('To create a custom pricing scheme for customer');
             return next();
         });
+
+        server.post('/customer/rule', HttpBasicAuth('admin', 'admin'), function create(req: Request, res: Response, next: Next) {
+
+            // It will associate the rules with customers
+
+            Customer.newCustomer(
+                req.body.username,
+                req.body.password,
+                req.body.name
+            );
+            res.json({
+                'message': `User ${req.body.username} created successfully`
+            });
+            return next();
+        });
     }
 
     static newCustomer(username: string, password: string, name: string) {
