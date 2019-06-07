@@ -4,14 +4,6 @@ const url = require('url');
 const path = require('path');
 const _ = require('lodash');
 
-// let basicAuth = Buffer.from("admin:admin").toString('base64');
-
-// const BASE_URL = process.env.BASE_URL || "http://localhost:9000";
-
-// const createUrl = (path) => {
-//     return url.resolve(BASE_URL, path);
-// }
-
 // Clean up the databases
 function cleanUpDatabase() {
     let databases = [
@@ -30,15 +22,6 @@ function cleanUpDatabase() {
             catch (e) { }
         }
     });
-    // ((resolve, reject) => {
-    //     for (let db in databases) {
-    //         try {
-    //             fs.unlinkSync(path.join(__dirname, '..', db));
-    //         }
-    //         catch (e) { }
-    //     }
-    //     resolve(true);
-    // });
 }
 
 // Create users
