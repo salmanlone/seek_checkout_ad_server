@@ -51,3 +51,12 @@ It would require port 9000 from your end, as well as it will come seeded with th
 http://baseurl/docs/index.html
 
 In my case the baseurl was `localhost:9000`
+
+# User Details
+Following are the user details to access server api endpoints which requires administration access
+
+### Administraion acces:
+```shell
+username: admin
+password: admin
+```
